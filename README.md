@@ -1,5 +1,5 @@
 # MFPCCox
-Sample Code for implementation of MFPCCox
+Sample Code of implementing MFPCCox
 
 'Dynamic Prediction of  Alzheimer's Disease Progression Using Features of Multiple Longitudinal Outcomes and Time-to-Event Data'
 
