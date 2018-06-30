@@ -13,6 +13,7 @@ rm(list=ls())
 source("functions.R")
 library(MASS)
 library(refund)
+library(survival)
 library(MFPCA)
 
 
@@ -96,7 +97,6 @@ for(i.run in 1:n.sim){
     
     # univariate FPC 
     Xi.test = NULL
-    fit.test = array(NA, dim(tmp.data))
     for(p in 1:3){
       tmp.ufpca = uPACE(multivar.train[,,p], argvals, tmp.data[,,p], nbasis=3)
       Xi.test = cbind(Xi.test, tmp.ufpca$scores) # dynamic FPC scores for test subjects 
@@ -110,14 +110,14 @@ for(i.run in 1:n.sim){
     long.pred = mfpca.pred(rho.test, meanFun.train, psi)
     
     
-    # risk prediction for different time windowes
+    # prediction for different time windowes
     for(dt in deltaT){
       ith = ith + 1
       DP.id[[ith]] = tmp.id
       DP.long[[ith]] = long.pred
       timeEvent[[ith]] = tmp.surv.data[, c("time", "event")] # true event time and even indicator
       trueProb [[ith]] = tmp.surv.data$true.prob[, (which((t+dt)==obstime)-1)] # true risk 
-      DP.prob[[ith]] = as.numeric(summary(survfit(CoxFit, newdata = tmp.surv.data, se.fit = F, conf.int = F), times = (t+dt))$surv)
+      DP.prob[[ith]] = cond.prob(CoxFit, tmp.surv.data, t, (t+p))  # risk prediction
     }
   }
   

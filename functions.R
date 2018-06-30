@@ -12,6 +12,7 @@
 # uPACE       # univariate FPCA via PACE
 # mfpca.score # MFPC scores
 # mfpca.pred  # MFPC longitudinal prediction
+# cond.prob   # Risk conditional probability
 # functions in tdROC package
 # 
 #####################################################
@@ -325,7 +326,14 @@ mfpca.pred = function(score, meanf, psi, n.rho=NULL){
   return(out)
 }
 
-#-----------------------------
+
+#risk predict
+cond.prob = function(model, newdata, Tstart, Tpred){
+  risk.Tstart = as.numeric(summary(survfit(model, newdata = newdata, se.fit = F, conf.int = F), times = Tstart)$surv)
+  risk.Tpred = as.numeric(summary(survfit(model, newdata = newdata, se.fit = F, conf.int = F), times = Tpred)$surv)
+  return(risk.Tpred/risk.Tstart)
+}
+
 ################################################################################
 ##
 ##                       Functions for R package tdROC
